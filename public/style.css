@@ -19,3 +19,27 @@ form div {
   margin: 1em;
   display: inline-block;
 }
+
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-inline {
+  width: 400px;
+}
+
+.active-purple-2 input[type='text']:focus:not([readonly]) {
+  border: 1px solid #ce93d8;
+  box-shadow: 0 0 0 1px #ce93d8;
+}
+
+.submit-button {
+  border: none;
+  background: none;
+}
+
+.active-purple-2 .fa {
+  color: #ce93d8;
+}
