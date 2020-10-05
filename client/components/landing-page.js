@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
-import {searchRecipe} from '../store/index.js'
+import {searchRecipe, addRecipe, getRecipe} from '../store/index.js'
 
 export class LandingPage extends Component {
   constructor() {
@@ -10,14 +10,20 @@ export class LandingPage extends Component {
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
+  componentDidMount() {
+    this.props.getRecipe()
+  }
 
   handleSubmit(evt) {
     evt.preventDefault()
-    console.log('search term submitted ---> ', this.state.search)
-    const search = this.state.search
+    const food = this.state.search
     //if recipe exists in database, use searchRecipe thunk creator
     //if recipe does not exist, use addRecipe thunk creator
-    this.props.searchRecipe(search)
+    const allRecipes = this.props.recipe
+    const foods = allRecipes.map((singleRecipe) => singleRecipe.food)
+    console.log(foods)
+    if (!foods.includes(food)) this.props.addRecipe(food, this.props.user.id)
+    else this.props.searchRecipe(food)
     this.setState({
       search: '',
     })
@@ -30,6 +36,7 @@ export class LandingPage extends Component {
   }
 
   render() {
+    console.log(this.props)
     return (
       <div>
         <div className="landing-page">
@@ -51,6 +58,30 @@ export class LandingPage extends Component {
             </button>
           </form>
         </div>
+        {this.props.search ? (
+          this.props.search.map((food) => (
+            <div key={food.id}>
+              <h5>{food.food}</h5>
+              <div>
+                {food.ingredients.map((ingredient) => (
+                  <div>
+                    <ul>
+                      <li>
+                        {ingredient.measure.amount +
+                          ' ' +
+                          ingredient.measure.name +
+                          ' ' +
+                          ingredient.name}
+                      </li>
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        ) : (
+          <h4>Loading...</h4>
+        )}
       </div>
     )
   }
@@ -58,6 +89,8 @@ export class LandingPage extends Component {
 
 const mapState = (state) => {
   return {
+    search: state.search,
+    user: state.user,
     recipe: state.recipe,
   }
 }
@@ -65,6 +98,8 @@ const mapState = (state) => {
 const mapDispatch = (dispatch) => {
   return {
     searchRecipe: (search) => dispatch(searchRecipe(search)),
+    addRecipe: (search, userId) => dispatch(addRecipe(search, userId)),
+    getRecipe: () => dispatch(getRecipe()),
   }
 }
 export default connect(mapState, mapDispatch)(LandingPage)

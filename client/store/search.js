@@ -17,34 +17,34 @@ export const addedRecipe = (search) => ({
 //THUNK CREATOR
 export const searchRecipe = (search) => async (dispatch) => {
   //search value should not have white space when passed as REQ.PARAMS
-  const recipe = search.replaceAll(' ', '%')
   try {
-    const {data} = await axios.get(`/api/recipe/${recipe}`)
+    const {data} = await axios.get(`/api/recipe/${search}`)
     dispatch(searchedRecipe(data))
   } catch (error) {
     console.error(error)
   }
 }
-export const addRecipe = (search) => async (dispatch) => {
+export const addRecipe = (search, userId) => async (dispatch) => {
   //search value should not have white space when passed as REQ.PARAMS
-  const recipe = search.replaceAll(' ', '%')
   try {
-    const {data} = await axios.post(`/api/recipe`, {recipe})
-    dispatch(addedRecipe(data))
+    await axios.post(`/api/recipe`, {
+      recipe: search,
+      userId: userId,
+    })
   } catch (error) {
     console.error(error)
   }
 }
 
 //INITIAL STATE
-const initialState = {recipe: {}}
+const initialState = []
 //REDUCER
 export default function (state = initialState, action) {
   switch (action.type) {
     case SEARCHED_RECIPE:
       return action.search
-    case ADDED_RECIPE:
-      return {...state, recipe: action.search}
+    // case ADDED_RECIPE:
+    //   return action.search
     default:
       return state
   }
