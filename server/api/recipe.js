@@ -54,21 +54,16 @@ router.post('/', async (req, res, next) => {
     const {data} = await axios.get('http://api.serpstack.com/search', {
       params,
     })
-
     //run web parsing api with 'result.organic_results'
     const organicResults = data.organic_results
     const urls = organicResults.map((result) => result.url)
-    urls.map((url) => ingredientParser(url, newRecipe, userId))
-
-    // const addedRecipe = await Recipe.findAll({
-    //   where: {
-    //     food: req.body.recipe,
-    //   },
-    //   attributes: ['id', 'food', 'ingredients'],
-    // })
-    // console.log('addedRecipe', addedRecipe)
-    // res.json(addedRecipe)
-    res.status(201)
+    const addedRecipe = urls.map((url) =>
+      ingredientParser(url, newRecipe, userId)
+    )
+    Promise.all(addedRecipe).then(async () => {
+      const response = await Recipe.findAll({where: {food: req.body.recipe}})
+      res.status(201).json(response)
+    })
   } catch (error) {
     console.error(error)
   }
@@ -86,11 +81,13 @@ async function ingredientParser(url, recipe, userId) {
 
     //create recipe table
     if (response.data.ingredients.length !== 0) {
-      await Recipe.create({
+      const addedOneRecipe = await Recipe.create({
         food: food,
         ingredients: response.data.ingredients,
         userId: userId,
       })
+      console.log('created a recipe!')
+      return addedOneRecipe
     }
   } catch (error) {
     console.error(error)

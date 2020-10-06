@@ -16,7 +16,7 @@ const {Recipe} = require('../db/models')
 const getResponse = async () => {
   try {
     const response = await Recipe.findAll({where: {food: 'pho'}})
-    console.log(response.data)
+    console.log(response)
   } catch (error) {
     console.error(error)
   }

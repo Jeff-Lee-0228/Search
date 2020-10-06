@@ -21,7 +21,6 @@ export class LandingPage extends Component {
     //if recipe does not exist, use addRecipe thunk creator
     const allRecipes = this.props.recipe
     const foods = allRecipes.map((singleRecipe) => singleRecipe.food)
-    console.log(foods)
     if (!foods.includes(food)) this.props.addRecipe(food, this.props.user.id)
     else this.props.searchRecipe(food)
     this.setState({
@@ -36,7 +35,6 @@ export class LandingPage extends Component {
   }
 
   render() {
-    console.log(this.props)
     return (
       <div>
         <div className="landing-page">

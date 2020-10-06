@@ -27,10 +27,11 @@ export const searchRecipe = (search) => async (dispatch) => {
 export const addRecipe = (search, userId) => async (dispatch) => {
   //search value should not have white space when passed as REQ.PARAMS
   try {
-    await axios.post(`/api/recipe`, {
+    const {data} = await axios.post(`/api/recipe`, {
       recipe: search,
       userId: userId,
     })
+    dispatch(addedRecipe(data))
   } catch (error) {
     console.error(error)
   }
@@ -43,8 +44,8 @@ export default function (state = initialState, action) {
   switch (action.type) {
     case SEARCHED_RECIPE:
       return action.search
-    // case ADDED_RECIPE:
-    //   return action.search
+    case ADDED_RECIPE:
+      return action.search
     default:
       return state
   }
